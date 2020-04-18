@@ -6,7 +6,7 @@
 using namespace std;
 
 vector<int> parseLine(string line);
-void printGraph(vector<vector<int>> &graph);
+void printGraph(vector<vector<int>> *graph);
 
 int main(int argc, char **argv)
 {
@@ -32,6 +32,8 @@ int main(int argc, char **argv)
 		graph.push_back(parseLine(line));
 	}
 
+	printGraph(&graph);
+
 	return 0;
 }
 
@@ -49,7 +51,15 @@ vector<int> parseLine(string line)
 
 }
 
-void printGraph(vector<vector<int>> &graph)
+void printGraph(vector<vector<int>> *graph)
 {
-
+	cout << "Graph:" << endl;
+	for(int i = 0; i < graph->size(); i++)
+	{
+		for(int j = 0; j < graph->at(i).size(); j++)
+		{
+			cout << graph->at(i)[j] << " ";
+		}
+		cout << endl;
+	}
 }
