@@ -89,18 +89,18 @@ vector<int> parseLine(string line)
 			}
 		}
 	}
-	/*
-	for(int i =0; i < temp.size(); i++)
-	{
-		cout << temp[i] << " ";
-	}
-	cout << endl;
-	*/
+	
 return temp;
 }
 
 void printGraph(vector<vector<int>> *graph)
 {
+	cout << "Available resources before allocation: " << endl;
+	for(int i =0; i < available.size(); i++)
+	{
+		cout << available[i] << " ";
+	}
+	cout << endl;
 	cout << "Graph:" << endl;
 	for(int i = 0; i < graph->size(); i++)
 	{
