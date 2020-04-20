@@ -6,17 +6,13 @@
 using namespace std;
 
 vector<int> parseLine(string line);
-<<<<<<< HEAD
 void printGraph(vector<vector<int>> *graph);
-
-=======
-void printGraph(vector<vector<int>> &graph);
 bool processes = false;
 bool resources = false;
 bool availableVector = false;
 int numProcesses =0, numResources =0;
 vector<int> available;
->>>>>>> other
+
 int main(int argc, char **argv)
 {
 	string line; //used for reading each line of the file
@@ -51,14 +47,10 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-<<<<<<< HEAD
 
 	printGraph(&graph);
-
-=======
-	printGraph(graph);
 	inFile.close();//closing the file
->>>>>>> other
+
 	return 0;
 }
 
@@ -109,21 +101,12 @@ return temp;
 
 void printGraph(vector<vector<int>> *graph)
 {
-<<<<<<< HEAD
 	cout << "Graph:" << endl;
 	for(int i = 0; i < graph->size(); i++)
 	{
 		for(int j = 0; j < graph->at(i).size(); j++)
 		{
 			cout << graph->at(i)[j] << " ";
-=======
-	cout << "resulting graph " << endl;
-	for(int i =0; i < graph.size(); i++)
-	{
-		for(int j =0; j < graph[i].size(); j++)
-		{
-			cout <<graph[i][j] << " ";
->>>>>>> other
 		}
 		cout << endl;
 	}
