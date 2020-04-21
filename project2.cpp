@@ -6,7 +6,8 @@
 using namespace std;
 
 vector<int> parseLine(string line);
-void printGraph(vector<vector<int>> *graph);
+void printGraph(vector<vector<int>> *graph);//method for printing the graph
+void allocateResources(vector<vector<int>> *graph, vector<int> *avail);//method for allocating all the resources to the processes
 bool processes = false;
 bool resources = false;
 bool availableVector = false;
@@ -47,7 +48,8 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-
+	//printGraph(&graph); //uncomment this to see what the origional available resources are
+	allocateResources(&graph, &available);
 	printGraph(&graph);
 	inFile.close();//closing the file
 
@@ -56,7 +58,7 @@ int main(int argc, char **argv)
 
 vector<int> parseLine(string line)
 {
-	vector<int> temp;
+	vector<int> temp;//temporary array to represent the row in the adjacency matrix
 
 	if(processes == false)//if we are on the number of processes section of the text file
 	{
@@ -111,3 +113,18 @@ void printGraph(vector<vector<int>> *graph)
 		cout << endl;
 	}
 }
+
+void allocateResources(vector<vector<int>> *graph, vector<int> *avail)
+{
+	//starting in the bottom left corner of the matrix
+	for(int i = numProcesses; i < numProcesses + numResources; i++)
+	{
+		for(int j =0; j < numProcesses; j++)
+		{
+			avail->at(i - numProcesses) -= graph->at(i)[j];
+		}
+	}
+
+
+}
+
