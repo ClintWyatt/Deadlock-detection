@@ -8,6 +8,7 @@ using namespace std;
 vector<int> parseLine(string line);
 void printGraph(vector<vector<int>> *graph);//method for printing the graph
 void allocateResources(vector<vector<int>> *graph, vector<int> *avail);//method for allocating all the resources to the processes
+bool graphReduction(vector<vector<int>> *graph, vector<int> *avail);//method to see if the graph is reducible
 bool processes = false;
 bool resources = false;
 bool availableVector = false;
@@ -128,3 +129,39 @@ void allocateResources(vector<vector<int>> *graph, vector<int> *avail)
 
 }
 
+bool graphReduction(vector<vector<int>> *graph, vector<int> *avail)
+{
+
+	int inSystem = numProcesses; //number of processes in the system
+	int numFailures = 0, success =0;//numFailerus is used to see if the number of failed requests by the processes equals the number of processes in the system. Success is used for a process 
+	//that can request resources and leave the system
+	for(int i = numProcesses; i > 0; i--)
+	{
+		for(int j =0; j < numProcesses; j++)
+		{
+			if(graph->at(j)[j] ==1)//if the process is in the system
+			{
+				for(int a = numProcesses; a < numResources + numProcesses; a++)//testing to see if the process at index j in the graph can request all resources
+				{
+					if(graph->at(j)[a] > avail->at(a - numProcesses))
+					{
+						success = -1; 
+						numFailures++;
+						break;//exit the loop. request cannot be granted. not enough resources are available
+					}
+				}
+				if(success ==0)//if the process was able to request resources
+				{
+					//process at index j in the graph can give it's resource back to the system. Update the available array by the allocated resources for process at index j
+				}
+			}
+			success = 0; //resetting the succcess varaible 
+		}
+
+		if(numFailures == i)//if ethe graph cannot be reduced 
+		{
+			return false;
+		}
+	}
+	return true;
+}
