@@ -146,21 +146,20 @@ bool graphReduction(vector<vector<int>> *graph, vector<int> *avail, vector<int> 
 
 	int rightQuadrant = numProcesses; //used to check the requests of each process in the right quadrant of the adjency matrix
 	int processesLeft = numProcesses; //used to specify the number of processes left in the system
-	int numFailures = 0, success =0;//numFailerus is used to see if the number of failed requests by the processes equals the number of processes in the system. Success is used for a process 
-	//that can request resources and leave the system
-	
+	int success =0;//Success is used for a process that can request resources and leave the system
+	bool reduceGraph = false;	
 	while(processesLeft >0) //while there are processes in the system
 	{
 		for(int j =0; j < numProcesses; j++)//starting from process 0 and going to process n
 		{
+
 			if(graph->at(j)[j] ==1)//if the process is in the system
 			{
 				for(int a = rightQuadrant; a < rightQuadrant + numResources; a++)//testing to see if the process at index j in the graph can request all resources
 				{
-					if(graph->at(j)[a] > avail->at(a - numProcesses))
+					if(graph->at(j)[a] > avail->at(a - numProcesses))//if the request cannot be done (not enough resources)
 					{
-						success = -1; 
-						numFailures++;
+						success = -1;//setting success to -1.  
 						break;//exit the loop. request cannot be granted. not enough resources are available
 					}
 				}
@@ -174,16 +173,17 @@ bool graphReduction(vector<vector<int>> *graph, vector<int> *avail, vector<int> 
 					{
 							avail->at(c) += graph->at(b)[j];
 					}
+					reduceGraph = true; //process is leaving the system
 				}
 			}
 			success = 0; //resetting the succcess varaible 
 		}
 
-		if(numFailures == numProcesses)//if ethe graph cannot be reduced 
+		if(reduceGraph == false)//if ethe graph cannot be reduced 
 		{
 			return false;
 		}
-		numFailures =0; //resetting the number of failures of processes trying to leave the system
+		reduceGraph = false;//resetting teh reduceGraph variable to false to test for the next reduction sequence
 	}
 	return true;
 }
