@@ -8,7 +8,7 @@ using namespace std;
 vector<int> parseLine(string line);
 void printGraph(vector<vector<int>> *graph);//method for printing the graph
 void allocateResources(vector<vector<int>> *graph, vector<int> *avail);//method for allocating all the resources to the processes
-bool graphReduction(vector<vector<int>> *graph, vector<int> *avail);//method to see if the graph is reducible
+bool graphReduction(vector<vector<int>> *graph, vector<int> *avail, vector<int> *safe);//method to see if the graph is reducible
 bool processes = false;
 bool resources = false;
 bool availableVector = false;
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		cout <<"ERROR: " << argv[1] << " is not a valid file" << endl;
 		return -1;
 	}
-	vector<int> temp;
+	vector<int> temp;//used for each line in the 2d adjacency matrix
 	while(getline(inFile, line))
 	{
 		if(line[0] != '%' && line.length() >0)//if the beginning of the line contains useful information about the graph
@@ -50,10 +50,22 @@ int main(int argc, char **argv)
 		}
 	}
 	//printGraph(&graph); //uncomment this to see what the origional available resources are
-	allocateResources(&graph, &available);
-	printGraph(&graph);
+	allocateResources(&graph, &available);//allocate all resources to the processes
+	printGraph(&graph);//print graph method
+	vector<int> safeExecution; //vector that will contain the safe execution of processes if the system does not deadlock
 	inFile.close();//closing the file
-
+	if(graphReduction(&graph, &available, &safeExecution) == false)
+	{
+		cout << "Graph reduction failed. Deadlock detected!" << endl;
+		return 0;
+	}
+	cout << "Graph reduction sucessful. System is safe from deadlock!" << endl;
+	cout << "Safe process execution: ";
+	for(int i =0; i < safeExecution.size(); i++)
+	{
+		cout << safeExecution[i] +1 << " -> ";
+	}
+	cout << endl;
 	return 0;
 }
 
@@ -129,19 +141,21 @@ void allocateResources(vector<vector<int>> *graph, vector<int> *avail)
 
 }
 
-bool graphReduction(vector<vector<int>> *graph, vector<int> *avail)
+bool graphReduction(vector<vector<int>> *graph, vector<int> *avail, vector<int> *safe)
 {
 
-	int inSystem = numProcesses; //number of processes in the system
+	int rightQuadrant = numProcesses; //used to check the requests of each process in the right quadrant of the adjency matrix
+	int processesLeft = numProcesses; //used to specify the number of processes left in the system
 	int numFailures = 0, success =0;//numFailerus is used to see if the number of failed requests by the processes equals the number of processes in the system. Success is used for a process 
 	//that can request resources and leave the system
-	for(int i = numProcesses; i > 0; i--)
+	
+	while(processesLeft >0) //while there are processes in the system
 	{
-		for(int j =0; j < numProcesses; j++)
+		for(int j =0; j < numProcesses; j++)//starting from process 0 and going to process n
 		{
 			if(graph->at(j)[j] ==1)//if the process is in the system
 			{
-				for(int a = numProcesses; a < numResources + numProcesses; a++)//testing to see if the process at index j in the graph can request all resources
+				for(int a = rightQuadrant; a < rightQuadrant + numResources; a++)//testing to see if the process at index j in the graph can request all resources
 				{
 					if(graph->at(j)[a] > avail->at(a - numProcesses))
 					{
@@ -152,16 +166,24 @@ bool graphReduction(vector<vector<int>> *graph, vector<int> *avail)
 				}
 				if(success ==0)//if the process was able to request resources
 				{
-					//process at index j in the graph can give it's resource back to the system. Update the available array by the allocated resources for process at index j
+					processesLeft--;//process can now leave the system
+					graph->at(j)[j] = 0;//process is now out of the system
+					safe->push_back(j);//adding the process to the safe execution vector
+					
+					for(int b = numProcesses, c = 0; b < numProcesses + numResources; b++, c++)//adding process j's allocation back to the system
+					{
+							avail->at(c) += graph->at(b)[j];
+					}
 				}
 			}
 			success = 0; //resetting the succcess varaible 
 		}
 
-		if(numFailures == i)//if ethe graph cannot be reduced 
+		if(numFailures == numProcesses)//if ethe graph cannot be reduced 
 		{
 			return false;
 		}
+		numFailures =0; //resetting the number of failures of processes trying to leave the system
 	}
 	return true;
 }
