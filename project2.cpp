@@ -5,18 +5,19 @@
 
 using namespace std;
 
-vector<int> parseLine(string line);
-void printGraph(vector<vector<int>> *graph);//method for printing the graph
+vector<int> parseLine(string line, vector<int> *avail);
+void printGraph(vector<vector<int>> *graph, vector<int> *avail);//method for printing the graph
 void allocateResources(vector<vector<int>> *graph, vector<int> *avail);//method for allocating all the resources to the processes
 bool graphReduction(vector<vector<int>> *graph, vector<int> *avail, vector<int> *safe);//method to see if the graph is reducible
 bool processes = false;
 bool resources = false;
 bool availableVector = false;
 int numProcesses =0, numResources =0;
-vector<int> available;
+//vector<int> available;
 
 int main(int argc, char **argv)
 {
+	vector<int> available;
 	string line; //used for reading each line of the file
 	ifstream inFile;//used to open the file
 	int row =0;
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
 		if(line[0] != '%' && line.length() >0)//if the beginning of the line contains useful information about the graph
 		{
 			
-			temp = parseLine(line); //use the parseLine function to get information about the graph
+			temp = parseLine(line, &available); //use the parseLine function to get information about the graph
 			if(processes == true && resources == true && available.size() > 0)//if we are on the matrix section of the graph
 			{
 				if(temp.size() != 0)//if the temp vector has nothing in it
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	}
 	//printGraph(&graph); //uncomment this to see what the origional available resources are
 	allocateResources(&graph, &available);//allocate all resources to the processes
-	printGraph(&graph);//print graph method
+	printGraph(&graph, &available);//print graph method
 	vector<int> safeExecution; //vector that will contain the safe execution of processes if the system does not deadlock
 	inFile.close();//closing the file
 	if(graphReduction(&graph, &available, &safeExecution) == false)
@@ -69,7 +70,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-vector<int> parseLine(string line)
+vector<int> parseLine(string line, vector<int> *avail)
 {
 	vector<int> temp;//temporary array to represent the row in the adjacency matrix
 
@@ -90,7 +91,7 @@ vector<int> parseLine(string line)
 		{
 			if(line[i] != ',')
 			{
-				available.push_back(line[i] - '0');//putting the number into the vector
+				avail->push_back(line[i] - '0');//putting the number into the vector
 			}
 		}
 	}
@@ -108,12 +109,12 @@ vector<int> parseLine(string line)
 return temp;
 }
 
-void printGraph(vector<vector<int>> *graph)
+void printGraph(vector<vector<int>> *graph, vector<int> *avail)
 {
 	cout << "Available resources before allocation: " << endl;
-	for(int i =0; i < available.size(); i++)
+	for(int i =0; i < avail->size(); i++)
 	{
-		cout << available[i] << " ";
+		cout << avail->at(i) << " ";
 	}
 	cout << endl;
 	cout << "Graph:" << endl;
