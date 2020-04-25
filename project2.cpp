@@ -111,7 +111,7 @@ return temp;
 
 void printGraph(vector<vector<int>> *graph, vector<int> *avail)
 {
-	cout << "Available resources before allocation: " << endl;
+	cout << "Available resources after allocation: " << endl;
 	for(int i =0; i < avail->size(); i++)
 	{
 		cout << avail->at(i) << " ";
